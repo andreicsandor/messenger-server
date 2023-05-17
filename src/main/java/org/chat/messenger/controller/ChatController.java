@@ -6,12 +6,15 @@ import org.chat.messenger.model.Notification;
 import org.chat.messenger.service.AccountService;
 import org.chat.messenger.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.messaging.SessionConnectEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,11 +24,11 @@ import java.util.List;
 public class ChatController {
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private AccountService accountService;
     @Autowired
     private ChatService chatService;
     @Autowired
-    private AccountService accountService;
+    private SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat")
     public void processMessage(MessageDTO messageDTO) {
