@@ -76,6 +76,11 @@ public class ChatController {
         return ResponseEntity.ok(accountService.listAccounts());
     }
 
+    @GetMapping("/api/active-contacts")
+    public ResponseEntity<?> findActiveContacts () {
+        return ResponseEntity.ok(accountService.listActiveUsers());
+    }
+
     private String setChatId(String sender, String recipient) {
         List<String> ids = Arrays.asList(sender, recipient);
         Collections.sort(ids);

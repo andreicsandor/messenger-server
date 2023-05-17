@@ -26,6 +26,11 @@ public class LoginController {
             if (account != null) {
                 response.put("message", "Login successful.");
                 response.put("username", account.getUsername());
+
+                // Add user to active users list
+                accountService.addActiveUser(account.getUsername());
+                System.out.println(accountService.listActiveUsers());
+
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 response.put("message", "Invalid username or password.");
@@ -33,6 +38,29 @@ public class LoginController {
             }
         } catch (AuthenticationException e) {
             response.put("message", "Login failed.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+    @PostMapping("/api/logout")
+    public ResponseEntity<Map<String, String>> logout(@RequestBody LoginDTO loginDTO) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            Account account = accountService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
+            if (account != null) {
+                response.put("message", "Logout successful.");
+                response.put("username", account.getUsername());
+
+                // Remove user from active users list
+                accountService.removeActiveUser(account.getUsername());
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                response.put("message", "Invalid username or password.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (AuthenticationException e) {
+            response.put("message", "Logout failed.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
