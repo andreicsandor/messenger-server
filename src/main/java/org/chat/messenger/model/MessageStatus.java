@@ -1,5 +1,5 @@
 package org.chat.messenger.model;
 
-public enum Status {
+public enum MessageStatus {
     SENT, DELIVERED, READ
 }

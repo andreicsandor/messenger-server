@@ -1,7 +1,6 @@
 package org.chat.messenger.model.repository;
 
 import org.chat.messenger.model.Message;
-import org.chat.messenger.model.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,13 +1,15 @@
-package org.chat.messenger.model;
+package org.chat.messenger.dto;
 
-public class Notification {
+import org.chat.messenger.model.NotificationType;
+
+public class NotificationDTO {
     private NotificationType type;
     private String sender;
     private String content;
 
-    public Notification() {}
+    public NotificationDTO() {}
 
-    public Notification(NotificationType type, String sender, String content) {
+    public NotificationDTO(NotificationType type, String sender, String content) {
         this.type = type;
         this.sender = sender;
         this.content = content;
@@ -37,3 +39,5 @@ public class Notification {
         this.content = content;
     }
 }
+
+

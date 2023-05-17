@@ -1,20 +1,19 @@
 package org.chat.messenger.controller;
 
 import org.chat.messenger.dto.MessageDTO;
+import org.chat.messenger.dto.NotificationDTO;
 import org.chat.messenger.model.Message;
 import org.chat.messenger.model.Notification;
+import org.chat.messenger.model.NotificationType;
 import org.chat.messenger.service.AccountService;
 import org.chat.messenger.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +28,21 @@ public class ChatController {
     private ChatService chatService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/notifications")
+    public void processNotification(NotificationDTO notificationDTO) {
+        NotificationType type = notificationDTO.getType();
+        String sender = notificationDTO.getSender();
+        String content = notificationDTO.getContent();
+
+        Notification notification = new Notification();
+        notification.setType(type);
+        notification.setSender(sender);
+        notification.setContent(content);
+
+        // Send notification to client
+        messagingTemplate.convertAndSend("/public/notifications", notification);
+    }
 
     @MessageMapping("/chat")
     public void processMessage(MessageDTO messageDTO) {
@@ -49,8 +63,7 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(message.getRecipient(),"/messages", savedMessage);
 
         // Send notification to client
-        Notification notification = new Notification(savedMessage.getSender());
-        messagingTemplate.convertAndSendToUser(notification.getSender(),"/notifications", notification);
+        // TO DO
     }
 
     @GetMapping("/api/messages/{id}")

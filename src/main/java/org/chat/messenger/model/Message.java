@@ -2,8 +2,6 @@ package org.chat.messenger.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
 @Entity
 public class Message {
     @Id
@@ -13,7 +11,7 @@ public class Message {
     private String sender;
     private String recipient;
     private String content;
-    private Status status;
+    private MessageStatus status;
 
     public Message() {
     }
@@ -22,7 +20,7 @@ public class Message {
         this.sender = sender;
         this.recipient = recipient;
         this.content = content;
-        this.status = Status.SENT;
+        this.status = MessageStatus.SENT;
     }
 
     public Long getId() {
@@ -65,11 +63,11 @@ public class Message {
         this.content = content;
     }
 
-    public Status getStatus() {
+    public MessageStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(MessageStatus status) {
         this.status = status;
     }
 }
