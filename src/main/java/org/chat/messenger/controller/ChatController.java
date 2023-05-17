@@ -3,6 +3,7 @@ package org.chat.messenger.controller;
 import org.chat.messenger.dto.MessageDTO;
 import org.chat.messenger.model.Message;
 import org.chat.messenger.model.Notification;
+import org.chat.messenger.service.AccountService;
 import org.chat.messenger.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class ChatController {
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private AccountService accountService;
 
     @MessageMapping("/chat")
     public void processMessage(MessageDTO messageDTO) {
@@ -47,9 +50,14 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(notification.getSender(),"/notifications", notification);
     }
 
-    @GetMapping("/messages/{id}")
+    @GetMapping("/api/messages/{id}")
     public ResponseEntity<?> findMessage (@PathVariable String id) {
         return ResponseEntity.ok(chatService.findById(id));
+    }
+
+    @GetMapping("/api/contacts")
+    public ResponseEntity<?> findContacts () {
+        return ResponseEntity.ok(accountService.listAccounts());
     }
 
     private String setChatId(String sender, String recipient) {
