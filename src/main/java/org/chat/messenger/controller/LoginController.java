@@ -29,7 +29,6 @@ public class LoginController {
 
                 // Add user to active users list
                 accountService.addActiveUser(account.getUsername());
-                System.out.println(accountService.listActiveUsers());
 
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
