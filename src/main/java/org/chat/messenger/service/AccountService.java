@@ -41,10 +41,6 @@ public class AccountService {
         activeAccounts.remove(username);
     }
 
-    public boolean isUserActive(String username) {
-        return activeAccounts.containsKey(username);
-    }
-
     public List<String> listActiveUsers() {
         List<String> activeUsers = new ArrayList<>(activeAccounts.keySet());
         return activeUsers;
