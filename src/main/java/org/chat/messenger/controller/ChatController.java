@@ -43,11 +43,12 @@ public class ChatController {
         notification.setContent(content);
 
         // Send notification to client
-        if (type == NotificationType.MESSAGE) {
+        if (type == NotificationType.MESSAGE || type == NotificationType.PING) {
             messagingTemplate.convertAndSendToUser(notification.getRecipient(), "/notifications", notification);
         } else {
             messagingTemplate.convertAndSend("/public/notifications", notification);
         }
+
     }
 
     @MessageMapping("/chat")
