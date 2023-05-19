@@ -6,6 +6,7 @@ import org.chat.messenger.model.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,5 +19,9 @@ public class ChatService {
         message.setStatus(MessageStatus.DELIVERED);
         messageRepository.save(message);
         return message;
+    }
+
+    public List<Message> findMessagesByChatId(String chatId) {
+        return messageRepository.findByChatId(chatId);
     }
 }

@@ -69,6 +69,11 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(message.getRecipient(),"/messages", savedMessage);
     }
 
+    @GetMapping("/api/messages/conversation/{chatId}")
+    public ResponseEntity<?> findMessagesByChatId (@PathVariable String chatId) {
+        return ResponseEntity.ok(chatService.findMessagesByChatId(chatId));
+    }
+
     @GetMapping("/api/contacts")
     public ResponseEntity<?> findContacts () {
         return ResponseEntity.ok(accountService.listAccounts());
