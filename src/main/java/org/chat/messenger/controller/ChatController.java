@@ -33,15 +33,21 @@ public class ChatController {
     public void processNotification(NotificationDTO notificationDTO) {
         NotificationType type = notificationDTO.getType();
         String sender = notificationDTO.getSender();
+        String recipient = notificationDTO.getRecipient();
         String content = notificationDTO.getContent();
 
         Notification notification = new Notification();
         notification.setType(type);
         notification.setSender(sender);
+        notification.setRecipient(recipient);
         notification.setContent(content);
 
         // Send notification to client
-        messagingTemplate.convertAndSend("/public/notifications", notification);
+        if (type == NotificationType.MESSAGE) {
+            messagingTemplate.convertAndSendToUser(notification.getRecipient(), "/notifications", notification);
+        } else {
+            messagingTemplate.convertAndSend("/public/notifications", notification);
+        }
     }
 
     @MessageMapping("/chat")
