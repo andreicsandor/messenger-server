@@ -67,14 +67,6 @@ public class ChatController {
         // Send message to client
         Message savedMessage = chatService.save(message);
         messagingTemplate.convertAndSendToUser(message.getRecipient(),"/messages", savedMessage);
-
-        // Send notification to client
-        // TO DO
-    }
-
-    @GetMapping("/api/messages/{id}")
-    public ResponseEntity<?> findMessage (@PathVariable String id) {
-        return ResponseEntity.ok(chatService.findById(id));
     }
 
     @GetMapping("/api/contacts")

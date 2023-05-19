@@ -19,16 +19,4 @@ public class ChatService {
         messageRepository.save(message);
         return message;
     }
-
-    // Finds message by given ID
-    public Message findById(String id) {
-        Optional<Message> optionalMessage = messageRepository.findById(Long.valueOf(id));
-        if (optionalMessage.isPresent()) {
-            Message message = optionalMessage.get();
-            messageRepository.save(message);
-            return message;
-        } else {
-            return null;
-        }
-    }
 }
