@@ -4,6 +4,7 @@ public class MessageDTO {
     private String sender;
     private String recipient;
     private String content;
+    private String room;
 
     public MessageDTO() {}
 
@@ -35,6 +36,14 @@ public class MessageDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 }
 

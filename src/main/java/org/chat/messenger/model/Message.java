@@ -7,11 +7,12 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String chatId;
     private String sender;
     private String recipient;
     private String content;
-    private MessageStatus status;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     public Message() {
     }
@@ -20,7 +21,6 @@ public class Message {
         this.sender = sender;
         this.recipient = recipient;
         this.content = content;
-        this.status = MessageStatus.SENT;
     }
 
     public Long getId() {
@@ -29,14 +29,6 @@ public class Message {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(String chatId) {
-        this.chatId = chatId;
     }
 
     public String getSender() {
@@ -63,11 +55,11 @@ public class Message {
         this.content = content;
     }
 
-    public MessageStatus getStatus() {
-        return status;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setStatus(MessageStatus status) {
-        this.status = status;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

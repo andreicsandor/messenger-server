@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByChatId(String chatId);
+    List<Message> findByRoomId(String roomId);
 }
