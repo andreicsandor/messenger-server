@@ -45,4 +45,8 @@ public class AccountService {
         List<String> activeUsers = new ArrayList<>(activeAccounts.keySet());
         return activeUsers;
     }
+
+    public Account findAccountByUsername(String username) {
+        return accountRepository.findByUsername(username);
+    }
 }
