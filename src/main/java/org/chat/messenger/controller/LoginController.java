@@ -41,27 +41,21 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/api/logout")
-    public ResponseEntity<Map<String, String>> logout(@RequestBody LoginDTO loginDTO) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            Account account = accountService.authenticate(loginDTO.getUsername(), loginDTO.getPassword());
+        @PostMapping("/api/logout")
+        public ResponseEntity<Map<String, String>> logout(@RequestParam String account) {
+            Map<String, String> response = new HashMap<>();
+
             if (account != null) {
                 response.put("message", "Logout successful.");
-                response.put("username", account.getUsername());
 
                 // Remove user from active users list
-                accountService.removeActiveUser(account.getUsername());
+                accountService.removeActiveUser(account);
 
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
-                response.put("message", "Invalid username or password.");
+                response.put("message", "Invalid username.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
-        } catch (AuthenticationException e) {
-            response.put("message", "Logout failed.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-    }
 }
 
