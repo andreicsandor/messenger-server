@@ -10,10 +10,8 @@ public class Account extends Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(name = "username", nullable = false, unique = true, length = 25)
     private String username;
-
     @Column(name = "password", nullable = false, length = 50)
     private String password;
 
