@@ -2,9 +2,7 @@ package org.chat.messenger.controller;
 
 import org.chat.messenger.dto.MessageDTO;
 import org.chat.messenger.dto.NotificationDTO;
-import org.chat.messenger.model.Message;
-import org.chat.messenger.model.Notification;
-import org.chat.messenger.model.NotificationType;
+import org.chat.messenger.model.*;
 import org.chat.messenger.service.AccountService;
 import org.chat.messenger.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class ChatController {
         // Send notification to client
         if (type == NotificationType.MESSAGE || type == NotificationType.PING) {
             messagingTemplate.convertAndSendToUser(notification.getRecipient(), "/notifications", notification);
-        } else {
+        } else if (type == NotificationType.ONLINE || type == NotificationType.OFFLINE) {
             messagingTemplate.convertAndSend("/public/notifications", notification);
         }
 
@@ -53,26 +51,45 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void processMessage(MessageDTO messageDTO) {
-        String sender = messageDTO.getSender();
-        String recipient = messageDTO.getRecipient();
+        String senderUsername = messageDTO.getSender();
+        String recipientUsername = messageDTO.getRecipient();
         String content = messageDTO.getContent();
 
-        String chatId = setChatId(sender, recipient);
+        String roomId = setRoomId(senderUsername, recipientUsername);
+        Room room = chatService.findRoomById(roomId);
+
+        Account sender = accountService.findAccountByUsername(senderUsername);
+        Account recipient = accountService.findAccountByUsername(recipientUsername);
+
+        // If room does not exist, create it
+        if (room == null) {
+            room = new Room(roomId, sender, recipient, RoomStatus.READ, RoomStatus.UNREAD);
+            room = chatService.saveRoom(room);
+        } else {
+            if (room.getUserOne().getUsername().equals(senderUsername)) {
+                room.setUserOneStatus(RoomStatus.READ);
+                room.setUserTwoStatus(RoomStatus.UNREAD);
+            } else {
+                room.setUserOneStatus(RoomStatus.UNREAD);
+                room.setUserTwoStatus(RoomStatus.READ);
+            }
+            room = chatService.saveRoom(room);
+        }
 
         Message message = new Message();
-        message.setChatId(chatId);
-        message.setSender(sender);
-        message.setRecipient(recipient);
+        message.setSender(senderUsername);
+        message.setRecipient(recipientUsername);
         message.setContent(content);
+        message.setRoom(room);
 
         // Send message to client
-        Message savedMessage = chatService.save(message);
+        Message savedMessage = chatService.saveMessage(message);
         messagingTemplate.convertAndSendToUser(message.getRecipient(),"/messages", savedMessage);
     }
 
-    @GetMapping("/api/messages/conversation/{chatId}")
-    public ResponseEntity<?> findMessagesByChatId (@PathVariable String chatId) {
-        return ResponseEntity.ok(chatService.findMessagesByChatId(chatId));
+    @GetMapping("/api/messages/conversation/{roomId}")
+    public ResponseEntity<?> findMessagesByRoomId(@PathVariable String roomId) {
+        return ResponseEntity.ok(chatService.findMessagesByRoomId(roomId));
     }
 
     @GetMapping("/api/contacts")
@@ -85,7 +102,7 @@ public class ChatController {
         return ResponseEntity.ok(accountService.listActiveUsers());
     }
 
-    private String setChatId(String sender, String recipient) {
+    private String setRoomId(String sender, String recipient) {
         List<String> ids = Arrays.asList(sender, recipient);
         Collections.sort(ids);
         return String.join("_", ids);
