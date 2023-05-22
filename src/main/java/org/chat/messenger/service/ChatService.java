@@ -2,6 +2,7 @@ package org.chat.messenger.service;
 
 import org.chat.messenger.model.Message;
 import org.chat.messenger.model.Room;
+import org.chat.messenger.model.RoomStatus;
 import org.chat.messenger.model.repository.MessageRepository;
 import org.chat.messenger.model.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,19 @@ public class ChatService {
 
     public Room findRoomById(String roomId) {
         return roomRepository.findById(roomId);
+    }
+
+    public Room updateRoomStatus(String roomId, String user, RoomStatus status) {
+        Room room = roomRepository.findById(roomId);
+        if (room != null) {
+            if (room.getUserOne().getUsername().equals(user)) {
+                room.setUserOneStatus(status);
+            } else if (room.getUserTwo().getUsername().equals(user)) {
+                room.setUserTwoStatus(status);
+            }
+            roomRepository.save(room);
+        }
+
+        return room;
     }
 }

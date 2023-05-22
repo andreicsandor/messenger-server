@@ -2,16 +2,16 @@ package org.chat.messenger.controller;
 
 import org.chat.messenger.dto.MessageDTO;
 import org.chat.messenger.dto.NotificationDTO;
+import org.chat.messenger.dto.RoomDTO;
 import org.chat.messenger.model.*;
 import org.chat.messenger.service.AccountService;
 import org.chat.messenger.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,6 +85,25 @@ public class ChatController {
         // Send message to client
         Message savedMessage = chatService.saveMessage(message);
         messagingTemplate.convertAndSendToUser(message.getRecipient(),"/messages", savedMessage);
+    }
+
+    @PatchMapping("/api/rooms/{roomId}")
+    public ResponseEntity<?> updateRoomStatus(@PathVariable String roomId, @RequestBody RoomDTO roomDTO) {
+        try {
+            Room room = chatService.updateRoomStatus(roomId, roomDTO.getUser(), roomDTO.getStatus());
+            if (room != null) {
+                return ResponseEntity.ok(room);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/api/rooms/{roomId}")
+    public ResponseEntity<?> findRoomById(@PathVariable String roomId) {
+        return ResponseEntity.ok(chatService.findRoomById(roomId));
     }
 
     @GetMapping("/api/messages/conversation/{roomId}")
